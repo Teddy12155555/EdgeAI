@@ -117,7 +117,7 @@ def detect(save_img=False, detector=None):
 
             t2 = time_synchronized()
             print(f'{s}Done. ({t2 - t1:.3f}s)')
-
+            cv2.imwrite('Result.jpg', im0)
 
 class FaceNet():
     def __init__(self):
@@ -148,15 +148,21 @@ class FaceNet():
             aligned = []
             names = []
             i = 1
+            if not os.path.exists(f'{root}/aligned/'):
+                os.mkdir(f'{root}/aligned/')
+
+            classname = ''
             for x, y in self.dataloader:
                 path = f'{root}/aligned/{dataset.idx_to_class[y]}/'
+                if classname != dataset.idx_to_class[y]:
+                    classname = dataset.idx_to_class[y]
+                    print(f'Create Face => {classname}')
                 if not os.path.exists(path):
                     i = 1
                     os.mkdir(path)
                 x_aligned, prob = self.mtcnn(x, return_prob=True,save_path= f'{path}/{i}.jpg')
                 i += 1
                 if x_aligned is not None:
-                    print('Face detected with probability: {:8f}'.format(prob))
                     aligned.append(x_aligned) 
                     names.append(dataset.idx_to_class[y])   
         
@@ -169,15 +175,21 @@ class FaceNet():
             dataset.idx_to_class = {i:c for c, i in dataset.class_to_idx.items()}
             loader = DataLoader(dataset, collate_fn=collate_fn, num_workers=workers)
             i = 1
+            if not os.path.exists(f'{root}/aligned/'):
+                os.mkdir(f'{root}/aligned/')
+
+            classname = ''
             for x, y in loader:
                 path = f'{root}/aligned/{dataset.idx_to_class[y]}/'
+                if classname != dataset.idx_to_class[y]:
+                    classname = dataset.idx_to_class[y]
+                    print(f'Add New Face => {classname}')
                 if not os.path.exists(path):
                     i = 1
                     os.mkdir(path)
                 x_aligned, prob = self.mtcnn(x, return_prob=True,save_path= f'{path}/{i}.jpg')
                 i += 1
                 if x_aligned is not None:
-                    print('Face detected with probability: {:8f}'.format(prob))
                     self.aligned.append(x_aligned) 
                     self.names.append(dataset.idx_to_class[y])
 
@@ -232,9 +244,9 @@ class FaceNetDetector():
 if __name__ == '__main__':
     net = FaceNet()
     # init
-    #net.gen_db('./face_db',True)
+    net.gen_db('./face_db',True)
     # add new one
-    #net.gen_db('./face_db',False)
+    net.gen_db('./face_db',False)
 
     detector = FaceNetDetector(net.resnet)
     with torch.no_grad():
