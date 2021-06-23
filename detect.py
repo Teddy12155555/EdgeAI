@@ -1,11 +1,9 @@
 import argparse
-from re import DEBUG
 import time
 from pathlib import Path
 import cv2
 import torch
 import torch.backends.cudnn as cudnn
-import torchvision.ops
 from torchvision import transforms
 from numpy import random
 from models.experimental import attempt_load
@@ -17,9 +15,7 @@ from utils.torch_utils import select_device, time_synchronized
 from facenet_pytorch import MTCNN, InceptionResnetV1
 from torch.utils.data import DataLoader
 from torchvision import datasets
-from PIL import Image
 import numpy as np
-import pandas as pd
 import os
 
 
