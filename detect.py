@@ -244,9 +244,9 @@ class FaceNetDetector():
 if __name__ == '__main__':
     net = FaceNet()
     # init
-    net.gen_db('./face_db',True)
+    #net.gen_db('./face_db',True)
     # add new one
-    net.gen_db('./face_db',False)
+    #net.gen_db('./face_db',False)
 
     detector = FaceNetDetector(net.resnet)
     with torch.no_grad():
